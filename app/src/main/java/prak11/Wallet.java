@@ -15,4 +15,8 @@ public class Wallet {
     public void pay(double amount){
         this.cashValue -= amount;
     }
+
+    public double getCashValue(){
+        return this.cashValue;
+    }
 }
