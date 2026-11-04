@@ -1,22 +1,34 @@
 package prak11;
-public class Wallet {
-    public String name;
-    public double cashValue;
 
-    public Wallet(String name, double cashValue){
+import java.util.List;
+
+public class Wallet implements PaymentStrategy {
+    private String name;
+    private double cashValue;
+
+    public Wallet(String name, double cashValue) {
         this.name = name;
         this.cashValue = cashValue;
     }
 
-    public boolean validate(double amount){
+    @Override
+    public boolean validate(double amount) {
         return this.cashValue >= amount;
     }
 
-    public void pay(double amount){
-        this.cashValue -= amount;
+    @Override
+    public void pay(double amount) {
+        if (validate(amount)) {
+            this.cashValue -= amount;
+        }
     }
 
-    public double getCashValue(){
+    @Override
+    public List<AuthorizationMethod> getRequiredAuthorizations() {
+        return List.of(); // Cash tidak butuh PIN/CCV
+    }
+
+    public double getCashValue() {
         return this.cashValue;
     }
 }

@@ -1,29 +1,40 @@
 package prak11;
 
-public class CreditCard {
-    public String cardNumber;
-    public double limit;
-    public double currentDebt;
-    public String ccv;
-    public String pin;
+import java.util.List;
 
-    public CreditCard(String cardNumber, double limit, double currentDebt, String ccv, String pin){
+public class CreditCard implements PaymentStrategy {
+    private String cardNumber;
+    private double limit;
+    private double currentDebt;
+    private String ccv;
+    private String pin;
+
+    public CreditCard(String cardNumber, double limit, String ccv, String pin) {
         this.cardNumber = cardNumber;
         this.limit = limit;
-        this.currentDebt = currentDebt;
+        this.currentDebt = 0.0;
         this.ccv = ccv;
         this.pin = pin;
     }
 
+    @Override
     public boolean validate(double amount) {
         return (this.currentDebt + amount) <= this.limit;
     }
 
+    @Override
     public void pay(double amount) {
+        if (validate(amount)) {
             this.currentDebt += amount;
+        }
     }
 
-    public double getCurrentDebt(){
+    @Override
+    public List<AuthorizationMethod> getRequiredAuthorizations() {
+        return List.of(AuthorizationMethod.CCV, AuthorizationMethod.PIN); // Butuh CCV dan PIN
+    }
+
+    public double getRemainingLimit() {
         return this.limit - this.currentDebt;
     }
 }

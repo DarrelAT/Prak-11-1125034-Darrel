@@ -2,48 +2,42 @@ package prak11;
 
 import java.util.Scanner;
 
-public class App{
-
+public class App {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
         Wallet wallet = new Wallet("dompet", 10000);
-        DebitCard debitcard = new DebitCard("123-456-77", 100000, "1313");
-        CreditCard creditcard = new CreditCard("112-333-456", 1000000, 0, "112", "1313");
+        DebitCard debitCard = new DebitCard("1234-5678-9012", 100000, "1313");
+        CreditCard creditCard = new CreditCard("9876-5432-1098", 500000, "345", "1313");
 
-        while(true) {
-            System.out.print("Masukan jumlah yang di bayar: ");
+        PaymentProcessor processor = new PaymentProcessor();
+
+        while (true) {
+            System.out.print("Masukkan jumlah yang dibayar: ");
             double amount = sc.nextDouble();
 
-            System.out.println("Pilih Metode Pembayaran: ");
-            System.out.println("1. Wallet (cash)");
+            System.out.println("Pilih metode pembayaran:");
+            System.out.println("1. Cash (Wallet)");
             System.out.println("2. Debit Card");
             System.out.println("3. Credit Card");
-            int metode = sc.nextInt();
+            System.out.print("Masukkan pilihan (1/2/3): ");
+            int choice = sc.nextInt();
 
-            if(metode == 1){
-                if(wallet.validate(amount)) {
-                    wallet.pay(amount);
-                    System.out.println("Pembayaran cash berhasil, sisa saldo wallet: " + wallet.getCashValue());
-                }else{
-                    System.out.println("Pembayaran gagal, sisa saldo wallet: " + wallet.getCashValue());
+            try {
+                if (choice == 1) {
+                    processor.processPayment(wallet, amount);
+                    System.out.println("Pembayaran cash berhasil, sisa wallet: " + wallet.getCashValue());
+                } else if (choice == 2) {
+                    processor.processPayment(debitCard, amount);
+                    System.out.println("Pembayaran debit berhasil, sisa saldo debit: " + debitCard.getBalance());
+                } else if (choice == 3) {
+                    processor.processPayment(creditCard, amount);
+                    System.out.println("Pembayaran credit card berhasil, sisa limit: " + creditCard.getRemainingLimit());
+                } else {
+                    System.out.println("Pilihan tidak valid!");
                 }
-            }else if(metode == 2){
-                if(debitcard.validate(amount)) {
-                    debitcard.pay(amount);
-                    System.out.println("Pembayarn debit berhasil, sisa saldo debit: " + debitcard.getBalance());
-                }else{
-                    System.out.println("Pembayaran gagal saldo debit tidak cukup, sisa saldo debit: " + debitcard.getBalance());
-                }
-            }else if(metode == 3){
-                if(creditcard.validate(amount)) {
-                    creditcard.pay(amount);
-                    System.out.println("Pembayaran Credit berhasil, limit sisa: " + creditcard.getCurrentDebt());
-                }else{
-                    System.out.println("Pembayaran gagal saldo melebih limit, limit saldo: "+ creditcard.getCurrentDebt());
-                }
-            }else{
-                System.out.println("Metode Pembayaran tidak valid ");
+            } catch (Exception e) {
+                System.out.println("Transaksi Gagal: " + e.getMessage());
             }
             System.out.println();
         }
